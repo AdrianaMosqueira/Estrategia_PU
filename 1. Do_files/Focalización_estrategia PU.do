@@ -9,6 +9,7 @@ gl output	"${ruta}\1. Resultados"
 * 1. Abrir bases: *
 /*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"
 use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
+clear all
 use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Hogares_PGH_26072024.dta"
 
 * 2. Por el lado de la Demanda: *
@@ -187,3 +188,39 @@ describe
 		egen hogar_norecibe = rowmiss(Cuna_mas Pronabec Jov_product PNPE PVL PCA JUNTOS_2 Lurawi_2 TP_2 FISE_2 Contigo_2 P65_2)	
 		/*3. Total de servicios que el hogar no recibe y debe recibir */
 		gen  serv_deberecib = 12 - hogar_norecibe	
+		
+	gen serv_4 = .
+	replace serv_4 = serv_deberecib == 4 
+	replace serv_4 = . if serv_deberecib == 0
+
+	gen serv_5 = .
+	replace serv_5 = serv_deberecib == 5
+
+	gen serv_6 = .
+	replace serv_6 = serv_deberecib == 6
+	
+	gen serv_7 = .
+	replace serv_7 = serv_deberecib == 7
+	
+	gen serv_8 = .
+	replace serv_8 = serv_deberecib == 8
+	
+	gen serv_9 = .
+	replace serv_9 = serv_deberecib == 9
+	
+	gen serv_10 = .
+	replace serv_10 = serv_deberecib == 10
+	
+	gen serv_11 = .
+	replace serv_11 = serv_deberecib == 11
+
+	gen serv_12 = .
+	replace serv_12 = serv_deberecib == 12
+	
+	
+	
+	
+collapse (first) departamento provincia distrito ubigeo centropoblado (count) co_hogar, by (ccpp)	
+	
+	
+	
