@@ -8,10 +8,10 @@ gl output	"${ruta}\1. Resultados"
 
 * 1. Abrir bases: *
 clear all
-use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"
-/*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Hogares_PGH_26072024.dta" 
-use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"
-*/
+/*use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
+use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Hogares_PGH_26072024.dta" 
+/*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"*/
+
 
 * 2. Por el lado de la Demanda: *
 label data "Priorización estrategia"
@@ -233,7 +233,7 @@ label data "Priorización estrategia"
 	
 	
 *7. Filtrar la base por codigo del ccpp, considerando la cantidad de hogares críticos en situación de pobreza extrema*	
-	collapse (first) departamento provincia distrito ubigeo centropoblado (sum) hogar_critico Pobreza_ serv_0 serv_4a6 serv_7a9 serv_10a12 v_0 v_1 v_2 v_3 (count) co_hogar, by (ccpp)  
+	collapse (first) departamento provincia distrito ubigeo centropoblado (sum) hogar_critico Pobreza_ serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3 (count) co_hogar, by (ccpp)  
 
 	tab hogar_critico h_vulnerables
 	gen proporcion = hogar_critico/co_hogar
