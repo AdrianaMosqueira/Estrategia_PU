@@ -1,9 +1,10 @@
+/*
 clear all
 cls
 gl ruta		"C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos"
 gl input 	"${ruta}\1. Módulos"
 gl output	"${ruta}\1. Resultados"
-
+*/
 //* FOCALIZACION *//
 
 * 1. Abrir bases: *
@@ -11,6 +12,7 @@ clear all
 /*use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
 use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Hogares_PGH_26072024.dta" 
 /*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"*/
+/*use "/Users/rominamangacambria/Library/CloudStorage/OneDrive-Personal/DMPM/2. PU/7. Estrategia/3. Criterios de priorización territorial/PGH/Hogares_PGH_26072024.dta"*/
 
 
 * 2. Por el lado de la Demanda: *
@@ -25,7 +27,7 @@ label data "Priorización estrategia"
 	// label variable h_vulnerables "Hogar clasificado como vulnerable"
 		
 	/* b. Ingresos: < linea de pobreza: Deciles */
-	gen Pobreza_=decil>5 /*(comentario 1)*/
+	gen Pobreza_=decil>7 /*(comentario 1)*/
 		// label define etiq_pobreza 1 "Pobre extremo" 0 "Pobre No extremo"
 		label values Pobreza_ etiq_pobreza
 		// codebook Pobreza_
@@ -204,7 +206,7 @@ label data "Priorización estrategia"
 	replace serv_5a9 = 0 if hogar_recibe <5 
 	replace serv_5a9 = 0 if hogar_recibe >=10
 	
-	*Variable: ratios de servcios que debe recibir y no recibe
+	/*Variable: ratios de servcios que debe recibir y no recibe
 	gen serv_4a6 = 1 if serv_deberecib >3 & serv_deberecib<7
 	replace serv_4a6 = 0 if serv_deberecib >6
 	
@@ -213,7 +215,7 @@ label data "Priorización estrategia"
 	replace serv_7a9 = 0 if serv_deberecib < 7
 	
 	gen serv_10a12 = 1 if serv_deberecib >9 & serv_deberecib<13
-	replace serv_10a12 = 0 if serv_deberecib < 10	
+	replace serv_10a12 = 0 if serv_deberecib < 10	*/
 	
 	*Variable: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas (# vulnerabilidades)
 	// menor_19 + discapacidad, adulto_60 + discapacidad
@@ -233,26 +235,42 @@ label data "Priorización estrategia"
 	
 	
 *7. Filtrar la base por codigo del ccpp, considerando la cantidad de hogares críticos en situación de pobreza extrema*	
-	collapse (first) departamento provincia distrito ubigeo centropoblado (sum) hogar_critico Pobreza_ serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3 (count) co_hogar, by (ccpp)  
-	collapse (sum) hogar_critico Pobreza_ serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3 (count) co_hogar, by (departamento)
-	
-	tab hogar_critico h_vulnerables
+	*collapse (first) departamento provincia distrito ubigeo centropoblado (count) co_hogar (sum) hogar_critico Pobreza_ serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3, by (ccpp)  
+
+	*tab hogar_critico h_vulnerables
 	gen proporcion = hogar_critico/co_hogar
-	hist co_hogar if co_hogar < 2000
+	*hist co_hogar if co_hogar < 2000
 	
+	gen cant_hogar = 1 if co_hogar >=200
+	replace cant_hogar = 0 if co_hogar <200
+	label define etiq_200 1 "CCPP +200 hogares" 0 "CCPP -200 hogares"
+	label values cant_hogar etiq_200
+
 	gen prop_vul3= v_3/co_hogar
 	gen prop_vul2= v_2/co_hogar
 	gen prop_vul1= v_1/co_hogar
 	
-	gen prop_pobreb= Pobreza_/co_hogar
-	gen prop_servpend1= serv_0/co_hogar
-	gen prop_servpend2= serv_1a4/co_hogar
-	gen prop_servpend3= serv_5a9/co_hogar
+	gen prop_pobreb= Pobreza_/co_hogar  // serv_4a6, serv_7a9, serv_10a12
 	
-	scatter prop_servpend3 proporcion
+* 8. Agrupación *
+gen cobertura = 1 if serv_0 == 1 // cobertura baja
+	replace cobertura = 2 if serv_1a4 == 1 // cobertura media
+	replace cobertura = 3 if serv_5a9 == 1 // cobertura alta
 	
+gen num_vulnera = 0 if v_0 == 1 // no vulnerable
+		replace num_vulnera = 1 if v_1 == 1 // una vulnerabilidad
+		replace num_vulnera = 2 if v_2 == 1 // dos vulnerabilidad
+		replace num_vulnera = 3 if v_3 == 1 // tres vulnerabilidad
+
+	tab cobertura // cantidad de hogares por nivel de cobertura
+	tab num_vulnera	// cantidad de hogares por nivel de vulnerabilidad	
+	tab num_vulnera cobertura // cantidad de hogares por nivel de cobertura y vulnerabilidad
 	
-/* División de CCPP en 4 grupos, considerando CCPP con +200 hogares */
+	table departamento cobertura
+	table distrito cobertura if departamento == "LIMA"
+	tabout distrito cobertura if departamento == "LIMA" using lima.xls
+
+/* División de CCPP en 4 grupos, considerando CCPP con +200 hogares 
 xtile quart = hogar_critico if cant_hogar ==1, nq(4)
 list hogar_critico quart, sepby(quart)
 
@@ -263,16 +281,23 @@ list hogar_critico quint, sepby(quint)
 xtile menor200 = hogar_critico if cant_hogar ==0, nq(3)
 list hogar_critico menor200, sepby(menor200)
 	
-
-	
 * N. Intentando *
 	
-	
-	
-	
-	
-	
-collapse (first) departamento provincia distrito ubigeo centropoblado (count) co_hogar, by (ccpp)	
-	
-	
+collapse (first) departamento provincia distrito ubigeo centropoblado (count) co_hogar, by (ccpp)*/
+*/
+
+bysort ubigeo ccpp: gen tag = _n == 1
+
+collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico Pobreza_ serv_0, by (ubigeo)  
+collapse (first) departamento provincia distrito (count) ubigeo (sum) serv_0 serv_1a4 serv_5a9
+
+	gen cant_std = (co_hogar - 2) / (155863 -  2) 
+	gen prop = hogar_critico / co_hogar
+	gen pr_pob = Pobreza_ / co_hogar
+	gen pr_serv = serv_0 / co_hogar
+
+	gen criterios= (cant_std + prop + pr_pob + pr_serv) / 4
+	xtile grupos = criterios , nq(6)
+
+
 	
