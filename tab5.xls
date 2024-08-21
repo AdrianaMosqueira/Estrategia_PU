@@ -1,0 +1,21 @@
+	num_vulnera				
+	No vulnerable	Vulnerabilidad baja	Vulenrabilidad media	Vulnerabilidad alta	Total
+	No.	No.	No.	No.	No.
+distrito					
+HUEPETUHE	38.0	338.0	96.0	5.0	477.0
+IBERIA	96.0	512.0	176.0	20.0	804.0
+INAMBARI	85.0	702.0	214.0	15.0	1,016.0
+IÃAPARI	31.0	119.0	22.0	1.0	173.0
+LABERINTO	33.0	378.0	133.0	14.0	558.0
+LAS PIEDRAS	135.0	924.0	188.0	16.0	1,263.0
+MADRE DE DIOS	69.0	466.0	41.0	0.0	576.0
+MANU	112.0	232.0	39.0	0.0	383.0
+TAHUAMANU	17.0	123.0	14.0	1.0	155.0
+TAMBOPATA	2,353.0	9,352.0	1,638.0	154.0	13,497.0
+Total	2,969.0	13,146.0	2,561.0	226.0	18,902.0
+
+cobertura					
+Cobertura baja	2,950.0	10,974.0	2,195.0	168.0	16,287.0
+Cobertura media	19.0	2,172.0	366.0	58.0	2,615.0
+Total	2,969.0	13,146.0	2,561.0	226.0	18,902.0
+

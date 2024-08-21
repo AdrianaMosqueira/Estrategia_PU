@@ -9,8 +9,8 @@ gl output	"${ruta}\1. Resultados"
 
 * 1. Abrir bases: *
 clear all
-/*use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
-use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Hogares_PGH_26072024.dta" 
+use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"
+/*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Hogares_PGH_26072024.dta"*/ 
 /*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"*/
 /*use "/Users/rominamangacambria/Library/CloudStorage/OneDrive-Personal/DMPM/2. PU/7. Estrategia/3. Criterios de priorización territorial/PGH/Hogares_PGH_26072024.dta"*/
 
@@ -256,18 +256,23 @@ label data "Priorización estrategia"
 gen cobertura = 1 if serv_0 == 1 // cobertura baja
 	replace cobertura = 2 if serv_1a4 == 1 // cobertura media
 	replace cobertura = 3 if serv_5a9 == 1 // cobertura alta
+	label define etiq_cobertura 1 "Cobertura baja" 2 "Cobertura media" 3 "Cobertura alta"
+	label values cobertura etiq_cobertura
 	
 gen num_vulnera = 0 if v_0 == 1 // no vulnerable
 		replace num_vulnera = 1 if v_1 == 1 // una vulnerabilidad
 		replace num_vulnera = 2 if v_2 == 1 // dos vulnerabilidad
 		replace num_vulnera = 3 if v_3 == 1 // tres vulnerabilidad
+		label define etiq_numvulnera 0 "No vulnerable" 1 "Vulnerabilidad baja" 2 "Vulenrabilidad media" 3 "Vulnerabilidad alta"
+		label values num_vulnera etiq_numvulnera
 
+		
 	tab cobertura // cantidad de hogares por nivel de cobertura
 	tab num_vulnera	// cantidad de hogares por nivel de vulnerabilidad	
 	tab num_vulnera cobertura // cantidad de hogares por nivel de cobertura y vulnerabilidad
 	
 	table departamento cobertura
-	table distrito cobertura if departamento == "LIMA"
+	table distrito cobertura num_vulnera if departamento == "MADRE DE DIOS"
 	tabout distrito cobertura if departamento == "LIMA" using lima.xls
 
 /* División de CCPP en 4 grupos, considerando CCPP con +200 hogares 
@@ -289,7 +294,7 @@ collapse (first) departamento provincia distrito ubigeo centropoblado (count) co
 bysort ubigeo ccpp: gen tag = _n == 1
 
 collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico Pobreza_ serv_0, by (ubigeo)  
-collapse (first) departamento provincia distrito (count) ubigeo (sum) serv_0 serv_1a4 serv_5a9
+collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)
 
 	gen cant_std = (co_hogar - 2) / (155863 -  2) 
 	gen prop = hogar_critico / co_hogar
@@ -299,5 +304,5 @@ collapse (first) departamento provincia distrito (count) ubigeo (sum) serv_0 ser
 	gen criterios= (cant_std + prop + pr_pob + pr_serv) / 4
 	xtile grupos = criterios , nq(6)
 
-
+/* egen combinada*/
 	

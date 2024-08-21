@@ -1,0 +1,9 @@
+	cobertura			
+num_vulnera	Cobertura baja	Cobertura media	Cobertura alta	Total
+	No.	No.	No.	No.
+No vulnerable	525,772.0	12,984.0	0.0	538,756.0
+Vulnerabilidad baja	1,547,198.0	490,426.0	651.0	2,038,275.0
+Vulenrabilidad media	387,408.0	95,168.0	246.0	482,822.0
+Vulnerabilidad alta	22,576.0	12,064.0	66.0	34,706.0
+Total	2,482,954.0	610,642.0	963.0	3,094,559.0
+
