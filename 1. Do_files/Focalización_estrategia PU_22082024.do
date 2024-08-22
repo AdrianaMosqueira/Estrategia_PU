@@ -20,18 +20,18 @@ label data "Priorización estrategia"
 //describe
 
 	/* a. Vulnerabilidad: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas, NN menores a 36 meses */
-	gen h_vulnerables= flag_menor_19==1 | flag_adultomayor_60==1 | flag_discapacidad == 1 | flag_menor_36m ==1
+	gen h_vulnerables= flag_menor_19==1 | flag_adultomayor ==1 | flag_discapacidad == 1 | flag_menor_36m ==1
 		// label define etiq_vulnerables 0 "No vulenrable" 1 "Vulnerable"
 		label values h_vulnerables etiq_vulnerables
 		// codebook h_vulnerables
 	// label variable h_vulnerables "Hogar clasificado como vulnerable"
 		
-	/* b. Ingresos: < linea de pobreza: Deciles */
+	/* b. Ingresos: < linea de pobreza: Deciles
 	gen Pobreza_=decil>7 /*(comentario 1)*/
 		//label define etiq_pobreza 1 "Pobre extremo" 0 "Pobre No extremo"
 		label values Pobreza_ etiq_pobreza
 		// codebook Pobreza_
-	// label variable Pobreza_ "Hogar considerado en situación de pobreza o pobreza extrema"
+	// label variable Pobreza_ "Hogar considerado en situación de pobreza o pobreza extrema"*/
 	
 * 3. Por el lado de la Oferta: SERVICIOS (excepto: SIS, PNVR, BPVVRS)*
 
@@ -56,10 +56,10 @@ label data "Priorización estrategia"
 	// label variable Pronabec "Servicio PRONABEC: hogares que les corresponde recibir y reciben o no reciben"
 	
 	*- 3. Pensión 65: Solo pobreza extrema -*
-	gen P65 = 1 if flag_adultomayor_60 == 1 & flag_p65 == 1
-		replace P65 = . if flag_adultomayor_60 ==1 & flag_p65 == 0 
-		replace P65 = . if flag_adultomayor_60 ==0 & flag_p65 == 0
-		replace P65 = 0 if flag_adultomayor_60 ==1 & flag_p65 == 0 
+	gen P65 = 1 if flag_adultomayor == 1 & flag_p65 == 1
+		replace P65 = . if flag_adultomayor ==1 & flag_p65 == 0 
+		replace P65 = . if flag_adultomayor ==0 & flag_p65 == 0
+		replace P65 = 0 if flag_adultomayor ==1 & flag_p65 == 0 
 		// label define etiq_adult60 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values P65 etiq_adult60
 		// codebook P65
@@ -86,7 +86,7 @@ label data "Priorización estrategia"
 	// label variable JUNTOS "Servicio JUNTOS: hogares que les corresponde recibir y reciben o no reciben"
 				
 	*- 6. Lurawi: -*
-	gen Total = 1 if flag_mujer_fertil == 1 | flag_adultomayor_60 == 1 | flag_discapacidad ==1 | flag_menor_19 ==1
+	gen Total = 1 if flag_mujer_fertil == 1 | flag_adultomayor == 1 | flag_discapacidad ==1 | flag_menor_19 ==1
 	gen Lurawi = 1 if Total == 1 & flag_lurawi == 1
 		replace Lurawi = . if Total == 0 & flag_lurawi == 1
 		replace Lurawi = . if Total == 0 & flag_lurawi == 0
@@ -162,22 +162,22 @@ label data "Priorización estrategia"
 	// Excluyendo los hogares considerados pobres no extremos (les corresponde el paquete basico)	
 		
 	gen JUNTOS_2 = JUNTOS
-	replace JUNTOS_2=. if Pobreza_==0  // . para hogares que les corresponde el paquete básico
+	replace JUNTOS_2=. if flag_hogar_cse_pobext==0  // . para hogares que les corresponde el paquete básico
 		
 	gen Contigo_2 = Contigo
-	replace Contigo_2=. if Pobreza_==0
+	replace Contigo_2=. if flag_hogar_cse_pobext==0
 	
 	gen P65_2 = P65
-	replace P65_2=. if Pobreza_==0
+	replace P65_2=. if flag_hogar_cse_pobext==0
 	
 	gen Lurawi_2 = Lurawi
-	replace Lurawi_2=. if Pobreza_==0
+	replace Lurawi_2=. if flag_hogar_cse_pobext==0
 		
 	gen TP_2 = TP
-	replace TP_2=. if Pobreza_==0
+	replace TP_2=. if flag_hogar_cse_pobext==0
 		
 	gen FISE_2 = FISE
-	replace FISE_2=. if Pobreza_==0
+	replace FISE_2=. if flag_hogar_cse_pobext==0
 		
 * 5. Priorización: 
 	* Paquete "Alivio a la Pobreza": Todos los servicios + Pobres extremos y 
@@ -219,7 +219,7 @@ label data "Priorización estrategia"
 	
 	*Variable: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas (# vulnerabilidades)
 	// menor_19 + discapacidad, adulto_60 + discapacidad
-	egen vulne = rowtotal (flag_menor_19 flag_adultomayor_60 flag_discapacidad)
+	egen vulne = rowtotal (flag_menor_19 flag_adultomayor flag_discapacidad)
 	
 	gen v_0 = 1 if vulne ==0
 	replace v_0 = 0 if vulne !=0
@@ -250,7 +250,7 @@ label data "Priorización estrategia"
 	gen prop_vul2= v_2/co_hogar
 	gen prop_vul1= v_1/co_hogar
 	
-	gen prop_pobreb= Pobreza_/co_hogar  // serv_4a6, serv_7a9, serv_10a12
+	gen prop_pobreb= flag_hogar_cse_pobext/co_hogar  // serv_4a6, serv_7a9, serv_10a12
 	
 * 8. Agrupación *
 	gen cobertura = 1 if serv_0 == 1 // cobertura baja
@@ -267,40 +267,40 @@ label data "Priorización estrategia"
 			label values num_vulnera etiq_numvulnera
 	
 	gen prior_ = 0 
-		replace prior_ = 1 if cobertura == 1 & num_vulnera == 3 & Pobreza_ == 1 // Grupo 1.a de atención
-		replace prior_ = 1 if cobertura == 2 & num_vulnera == 3 & Pobreza_ == 1 // Grupo 1.b de atención 
-		replace prior_ = 1 if cobertura == 1 & num_vulnera == 2 & Pobreza_ == 1 // Grupo 1.b de atención 
-		replace	prior_ = 2 if cobertura == 2 & num_vulnera == 2 & Pobreza_ == 1
-		replace prior_ = 2 if cobertura == 2 & num_vulnera == 2 & Pobreza_ == 1
-		replace prior_ = 2 if cobertura == 3 & num_vulnera == 3 & Pobreza_ == 1
-		replace prior_ = 2 if cobertura == 1 & num_vulnera == 1 & Pobreza_ == 1
-		replace prior_ = 3 if cobertura == 3 & num_vulnera == 2 & Pobreza_ == 1
-		replace prior_ = 3 if cobertura == 2 & num_vulnera == 1 & Pobreza_ == 1
-		replace prior_ = 4 if cobertura == 3 & num_vulnera == 1 & Pobreza_ == 1
-		replace prior_ = 4 if cobertura == 3 & num_vulnera == 0 & Pobreza_ == 1
-		replace prior_ = 4 if cobertura == 2 & num_vulnera == 0 & Pobreza_ == 1
-		replace prior_ = 4 if cobertura == 1 & num_vulnera == 0 & Pobreza_ == 1
+		replace prior_ = 1 if cobertura == 1 & num_vulnera == 3 & flag_hogar_cse_pobext == 1 // Grupo 1.a de atención
+		replace prior_ = 1 if cobertura == 2 & num_vulnera == 3 & flag_hogar_cse_pobext == 1 // Grupo 1.b de atención 
+		replace prior_ = 1 if cobertura == 1 & num_vulnera == 2 & flag_hogar_cse_pobext == 1 // Grupo 1.b de atención 
+		replace	prior_ = 2 if cobertura == 2 & num_vulnera == 2 & flag_hogar_cse_pobext == 1
+		replace prior_ = 2 if cobertura == 2 & num_vulnera == 2 & flag_hogar_cse_pobext == 1
+		replace prior_ = 2 if cobertura == 3 & num_vulnera == 3 & flag_hogar_cse_pobext == 1
+		replace prior_ = 2 if cobertura == 1 & num_vulnera == 1 & flag_hogar_cse_pobext == 1
+		replace prior_ = 3 if cobertura == 3 & num_vulnera == 2 & flag_hogar_cse_pobext == 1
+		replace prior_ = 3 if cobertura == 2 & num_vulnera == 1 & flag_hogar_cse_pobext == 1
+		replace prior_ = 4 if cobertura == 3 & num_vulnera == 1 & flag_hogar_cse_pobext == 1
+		replace prior_ = 4 if cobertura == 3 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
+		replace prior_ = 4 if cobertura == 2 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
+		replace prior_ = 4 if cobertura == 1 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
 		
 	gen prior_1 = 0 
-		replace prior_1 = 1 if cobertura == 1 & num_vulnera == 3 & Pobreza_ == 1 // Grupo 1.a de atención
-		replace prior_1 = 1 if cobertura == 2 & num_vulnera == 3 & Pobreza_ == 1 // Grupo 1.b de atención 
-		replace prior_1 = 1 if cobertura == 1 & num_vulnera == 2 & Pobreza_ == 1 // Grupo 1.b de atención 
+		replace prior_1 = 1 if cobertura == 1 & num_vulnera == 3 & flag_hogar_cse_pobext == 1 // Grupo 1.a de atención
+		replace prior_1 = 1 if cobertura == 2 & num_vulnera == 3 & flag_hogar_cse_pobext == 1 // Grupo 1.b de atención 
+		replace prior_1 = 1 if cobertura == 1 & num_vulnera == 2 & flag_hogar_cse_pobext == 1 // Grupo 1.b de atención 
 	
 	gen prior_2 = 0
-		replace	prior_2 = 1 if cobertura == 2 & num_vulnera == 2 & Pobreza_ == 1
-		replace prior_2 = 1 if cobertura == 2 & num_vulnera == 2 & Pobreza_ == 1
-		replace prior_2 = 1 if cobertura == 3 & num_vulnera == 3 & Pobreza_ == 1
-		replace prior_2 = 1 if cobertura == 1 & num_vulnera == 1 & Pobreza_ == 1
+		replace	prior_2 = 1 if cobertura == 2 & num_vulnera == 2 & flag_hogar_cse_pobext == 1
+		replace prior_2 = 1 if cobertura == 2 & num_vulnera == 2 & flag_hogar_cse_pobext == 1
+		replace prior_2 = 1 if cobertura == 3 & num_vulnera == 3 & flag_hogar_cse_pobext == 1
+		replace prior_2 = 1 if cobertura == 1 & num_vulnera == 1 & flag_hogar_cse_pobext == 1
 	
 	gen prior_3 = 0
-		replace prior_3 = 1 if cobertura == 3 & num_vulnera == 2 & Pobreza_ == 1
-		replace prior_3 = 1 if cobertura == 2 & num_vulnera == 1 & Pobreza_ == 1
+		replace prior_3 = 1 if cobertura == 3 & num_vulnera == 2 & flag_hogar_cse_pobext == 1
+		replace prior_3 = 1 if cobertura == 2 & num_vulnera == 1 & flag_hogar_cse_pobext == 1
 		
 	gen prior_4 = 0	
-		replace prior_4 = 1 if cobertura == 3 & num_vulnera == 1 & Pobreza_ == 1
-		replace prior_4 = 1 if cobertura == 3 & num_vulnera == 0 & Pobreza_ == 1
-		replace prior_4 = 1 if cobertura == 2 & num_vulnera == 0 & Pobreza_ == 1
-		replace prior_4 = 1 if cobertura == 1 & num_vulnera == 0 & Pobreza_ == 1
+		replace prior_4 = 1 if cobertura == 3 & num_vulnera == 1 & flag_hogar_cse_pobext == 1
+		replace prior_4 = 1 if cobertura == 3 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
+		replace prior_4 = 1 if cobertura == 2 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
+		replace prior_4 = 1 if cobertura == 1 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
 		
 	tab cobertura // cantidad de hogares por nivel de cobertura
 	tab num_vulnera	// cantidad de hogares por nivel de vulnerabilidad	
@@ -332,7 +332,7 @@ collapse (first) departamento provincia distrito ubigeo centropoblado (count) co
 
 bysort ubigeo ccpp: gen tag = _n == 1
 
-collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico Pobreza_ serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3 prior_ prior_1 prior_2 prior_3 prior_4, by (ubigeo)
+collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico flag_hogar_cse_pobext serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3  prior_1 prior_2 prior_3 prior_4, by (ubigeo)
 /*collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)*/
 
 	gen cant_std = (co_hogar - 2) / (155863 -  2) 
