@@ -276,7 +276,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		
 * 8. Intentando *
 	
-collapse (first) departamento provincia distrito ubigeo centropoblado (count) co_hogar, by (ccpp)*/
+/*collapse (first) departamento provincia distrito ubigeo centropoblado (count) co_hogar, by (ccpp)*/
 
 bysort ubigeo ccpp: gen tag = _n == 1
 
@@ -288,8 +288,11 @@ restore
 gen h200 = 1 if co_hogar <= 200
 replace h200 = 0 if co_hogar > 200
 
+gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
+replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
+
 gen proporcion_HC = hogar_critico/co_hogar
-gen P1 = 1 if proporcion_HC > 0.7 & h200 == 0
+gen P1 = 1 if proporcion_HC > 0.7 & pobre_extremo == 1
  replace P1 = 2 if proporcion_HC <= 0.7 & proporcion_HC > 0.6 & h200 == 0
  replace P1 = 3 if proporcion_HC <= 0.6 & proporcion_HC > 0.5 & h200 == 0
  replace P1 = 4 if proporcion_HC <= 0.5 & proporcion_HC > 0.4 & h200 == 0
