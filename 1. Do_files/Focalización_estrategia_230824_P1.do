@@ -3,7 +3,7 @@
 * 1. Abrir bases: *
 clear all
 /*use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
-use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta 1_priorizacion.dta" 
+use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta2_260824.dta"
 /*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"*/
 /*use "/Users/rominamangacambria/Library/CloudStorage/OneDrive-Personal/DMPM/2. PU/7. Estrategia/3. Criterios de priorización territorial/PGH/Hogares_PGH_26072024.dta"*/
 
@@ -281,11 +281,11 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 bysort ubigeo ccpp: gen tag = _n == 1
 
 preserve
-collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext, by (ubigeo)
+collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext, by (ubigeo)
 restore
 
 * PROPUESTA 1: PROPORCION DE HOGAR CRITICO + DISTRITOS CON + 200 DISTRITOS CON HOGARES CRITICOS *
-gen h200 = 1 if co_hogar <= 200
+/*gen h200 = 1 if co_hogar <= 200
 replace h200 = 0 if co_hogar > 200
 
 gen proporcion_HC = hogar_critico/co_hogar
@@ -298,7 +298,7 @@ gen P1 = 1 if proporcion_HC > 0.7 & h200 == 0
  replace P1 = 7 if proporcion_HC <= 0.7 & proporcion_HC > 0.6 & h200 == 1
  replace P1 = 8 if proporcion_HC <= 0.6 & proporcion_HC > 0.5 & h200 == 1 
  replace P1 = 9 if proporcion_HC <= 0.5 & proporcion_HC > 0.4 & h200 == 1
- replace P1 = 10 if proporcion_HC <= 0.4 & proporcion_HC > 0.0 & h200 == 1
+ replace P1 = 10 if proporcion_HC <= 0.4 & proporcion_HC > 0.0 & h200 == 1*/
  
 * PROPUESTA 2: POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO *
 gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
@@ -306,14 +306,30 @@ replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
 gen proporcion_PE = flag_hogar_cse_pobext/co_hogar
 
 gen proporcion_HC = hogar_critico/co_hogar 
-gen P1 = 1 if proporcion_HC > 0.65 & pobre_extremo == 1
+gen prop_PE = flag_hogar_cse_pobext/co_hogar
+
+/*gen P1 = 1 if proporcion_HC > 0.65 & pobre_extremo == 1
  replace P1 = 2 if proporcion_HC <= 0.65 & proporcion_HC > 0.53 & pobre_extremo == 1
  replace P1 = 3 if proporcion_HC <= 0.53 & proporcion_HC > 0.43 & pobre_extremo == 1 
  replace P1 = 4 if proporcion_HC <= 0.43 & proporcion_HC > 0.00 & pobre_extremo == 1
- replace P1 = 4 if pobre_extremo == 0 
+ replace P1 = 4 if pobre_extremo == 0 */
  
-collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P1)
-gen prop_PE = flag_hogar_cse_pobext/co_hogar
+xtile quintiles = proporcion_HC, nq(5)
+bysort quintiles: sum proporcion_HC co_hogar 
+ 
+gen corte1 = 0 
+replace corte1 = 1 if prop_PE >= 0.413 
+
+gen corte1a = 0
+replace corte1a = 1 if proporcion_HC >= 0.6028
+
+gen P2 = 1 if corte1 == 1 & corte1a == 1
+replace P2 = 2 if  corte1 == 1 & corte1a == 0
+replace P2 = 3 if  corte1 == 0 & corte1a == 1
+replace P2 = 4 if  corte1 == 0 & corte1a == 0
+
+collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P2)
+
 
 * PROPUESTA 3: POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO *
 collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3, by (ubigeo)
@@ -321,17 +337,24 @@ collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hoga
 gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
 replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
 gen proporcion_HC = hogar_critico/co_hogar 
+gen prop_PE = flag_hogar_cse_pobext/co_hogar 
 
-gen P2 = 1 if v_3 > 0 & pobre_extremo == 1
+gen prop_v3 = v_3/co_hogar
+gen prop_v2 = v_2/co_hogar
+gen prop_v1 = v_1/co_hogar
+
+gen prop_serv0 = serv_0/co_hogar
+gen prop_serv1a4 = serv_1a4/co_hogar
+gen prop_serv5a9 = serv_5a9/co_hogar
+
+gen prop_PE = flag_hogar_cse_pobext/co_hogar
+
+gen P2 = 1 if prop_v3 > 0 & prop_serv0 > 0 & pobre_extremo == 1
  replace P1 = 2 if proporcion_HC <= 0.65 & proporcion_HC > 0.53 & pobre_extremo == 1
  replace P1 = 3 if proporcion_HC <= 0.53 & proporcion_HC > 0.43 & pobre_extremo == 1 
  replace P1 = 4 if proporcion_HC <= 0.43 & proporcion_HC > 0.00 & pobre_extremo == 1
  replace P1 = 4 if pobre_extremo == 0 
  
-collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P1)
-gen prop_PE = flag_hogar_cse_pobext/co_hogar
-
-
 
 /*collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)
 
