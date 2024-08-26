@@ -270,7 +270,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace prior_4 = 1 if cobertura == 1 & num_vulnera == 0 & flag_hogar_cse_pobext == 1
 		
 	gen pobre_no_ext = 1 if flag_hogar_cse_pobext == 0
-		replace pobre_no_ext = 0 if hogar_no_critico == 1
+		replace pobre_no_ext = 0 if  flag_hogar_cse_pobext== 1
 	gen hogar_no_critico = 1 if hogar_critico == 0
 		replace hogar_no_critico = 0 if hogar_critico == 1 
 		
@@ -288,11 +288,8 @@ restore
 gen h200 = 1 if co_hogar <= 200
 replace h200 = 0 if co_hogar > 200
 
-gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
-replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
-
 gen proporcion_HC = hogar_critico/co_hogar
-gen P1 = 1 if proporcion_HC > 0.7 & pobre_extremo == 1
+gen P1 = 1 if proporcion_HC > 0.7 & h200 == 0
  replace P1 = 2 if proporcion_HC <= 0.7 & proporcion_HC > 0.6 & h200 == 0
  replace P1 = 3 if proporcion_HC <= 0.6 & proporcion_HC > 0.5 & h200 == 0
  replace P1 = 4 if proporcion_HC <= 0.5 & proporcion_HC > 0.4 & h200 == 0
@@ -302,6 +299,22 @@ gen P1 = 1 if proporcion_HC > 0.7 & pobre_extremo == 1
  replace P1 = 8 if proporcion_HC <= 0.6 & proporcion_HC > 0.5 & h200 == 1 
  replace P1 = 9 if proporcion_HC <= 0.5 & proporcion_HC > 0.4 & h200 == 1
  replace P1 = 10 if proporcion_HC <= 0.4 & proporcion_HC > 0.0 & h200 == 1
+ 
+* PROPUESTA 2: POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO *
+gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
+replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
+gen proporcion_PE = flag_hogar_cse_pobext/co_hogar
+
+gen proporcion_HC = hogar_critico/co_hogar 
+gen P1 = 1 if proporcion_HC > 0.65 & pobre_extremo == 1
+ replace P1 = 2 if proporcion_HC <= 0.65 & proporcion_HC > 0.53 & pobre_extremo == 1
+ replace P1 = 3 if proporcion_HC <= 0.53 & proporcion_HC > 0.43 & pobre_extremo == 1 
+ replace P1 = 4 if proporcion_HC <= 0.43 & proporcion_HC > 0.00 & pobre_extremo == 1
+ replace P1 = 4 if pobre_extremo == 0 
+ 
+collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P1)
+gen prop_PE = flag_hogar_cse_pobext/co_hogar
+
  
 
 /*collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)
