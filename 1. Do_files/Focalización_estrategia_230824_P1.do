@@ -3,16 +3,15 @@
 * 1. Abrir bases: *
 clear all
 /*use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
-use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta2_260824.dta"
+use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_27082024.dta"
 /*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"*/
 /*use "/Users/rominamangacambria/Library/CloudStorage/OneDrive-Personal/DMPM/2. PU/7. Estrategia/3. Criterios de priorización territorial/PGH/Hogares_PGH_26072024.dta"*/
-
 
 * 2. Por el lado de la Demanda: *
 
 	/* a. Vulnerabilidad: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas, NN menores a 36 meses */
 	gen h_vulnerables= flag_menor_19==1 | flag_adultomayor ==1 | flag_discapacidad == 1 | flag_menor_36m ==1
-		// label define etiq_vulnerables 0 "No vulenrable" 1 "Vulnerable"
+		//label define etiq_vulnerables 0 "No vulenrable" 1 "Vulnerable"
 		label values h_vulnerables etiq_vulnerables
 		// codebook h_vulnerables
 	// label variable h_vulnerables "Hogar clasificado como vulnerable"
@@ -64,7 +63,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace JUNTOS = . if flag_mujer_fertil ==0 & flag_juntos == 1
 		replace JUNTOS = . if flag_mujer_fertil ==0 & flag_juntos == 0
 		replace JUNTOS = 0 if flag_mujer_fertil ==1 & flag_juntos == 0
-		// label define etiq_juntos 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
+		//label define etiq_juntos 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values JUNTOS etiq_juntos
 		// codebook JUNTOS
 	// label variable JUNTOS "Servicio JUNTOS: hogares que les corresponde recibir y reciben o no reciben"
@@ -75,7 +74,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace Lurawi = . if Total == 0 & flag_lurawi == 1
 		replace Lurawi = . if Total == 0 & flag_lurawi == 0
 		replace Lurawi = 0 if Total == 1 & flag_lurawi == 0
-		// label define etiq_lurawi 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
+		//label define etiq_lurawi 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values Lurawi etiq_lurawi
 		// codebook Lurawi
 	// label variable Lurawi "Servicio LURAWI: hogares que les corresponde recibir y reciben o no reciben"
@@ -85,7 +84,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace PVL = . if Total == 0 & flag_pvl == 1
 		replace PVL = . if Total == 0 & flag_pvl == 0
 		replace PVL = 0 if Total == 1 & flag_pvl == 0
-		// label define etiq_pvl 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
+	//	label define etiq_pvl 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values PVL etiq_pvl
 		// codebook PVL
 	// label variable PVL "Servicio Programa Vaso de Leche: hogares que les corresponde recibir y reciben o no reciben"
@@ -105,7 +104,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace Jov_product = . if Total == 0 & flag_jovenes_prod == 1
 		replace Jov_product = . if Total == 0 & flag_jovenes_prod == 0
 		replace Jov_product = 0 if Total == 1 & flag_jovenes_prod == 0
-		// label define etiq_jp 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
+		//label define etiq_jp 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values Jov_product etiq_jp
 		// codebook Jov_product
 	// label variable Jov_product "Jóvenes Productivos: hogares que les corresponde recibir y reciben o no reciben"
@@ -115,7 +114,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace PNPE = . if Total == 0 & flag_empleabilidad == 1
 		replace PNPE = . if Total == 0 & flag_empleabilidad == 0
 		replace PNPE = 0 if Total == 1 & flag_empleabilidad == 0
-		// label define etiq_PNPE 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
+		//label define etiq_PNPE 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values PNPE etiq_PNPE
 		// codebook PNPE
 	// label variable PNPE "Servicio Programa Nacional para la Empleabilidad: hogares que les corresponde recibir y reciben o no reciben"
@@ -135,7 +134,7 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		replace FISE = . if Total == 0 & flag_fise == 1
 		replace FISE = . if Total == 0 & flag_fise == 0
 		replace FISE = 0 if Total == 1 & flag_fise == 0
-		// label define etiq_FISE 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
+		//label define etiq_FISE 1 "Si corresponde y si recibe" 0 "Si corresponde y no recibe"
 		label values FISE etiq_FISE
 		// codebook FISE
 	// label variable FISE "Servicio Fondo de Inclusión Social Energético Propio: hogares que les corresponde recibir y reciben o no reciben"
@@ -189,6 +188,9 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 	gen ser1a9 = 1 if hogar_recibe >= 1
 	replace ser1a9 = 0 if hogar_recibe == 0
 	
+	gen cobertura = serv0
+	label define etiq_cobertura 1 "Sin cobertura" 0 "Con cobertura"
+		label values cobertura etiq_cobertura	
 	
 	*Variable: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas (# vulnerabilidades)
 	// menor_19 + discapacidad, adulto_60 + discapacidad
@@ -203,11 +205,16 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 	gen v_3 = 1 if vulne ==3
 	replace v_3 = 0 if vulne !=3*/
 	
-	gen v1 = 1 if vulne ==0 | vulne ==1  // ninguna o una vulnerabilidad por hogar v0
+	gen v1 = 1 if vulne ==0 | vulne ==1  // 0 o 1 vulnerabilidad por hogar v0
 	replace v1 = 0 if vulne==2 | vulne ==3
 	
-	gen v2 = 1 if vulne ==2 | vulne ==3  // por lo menos dos vulnerabilidades por hogar v1
+	gen v2 = 1 if vulne ==2 | vulne ==3  // por lo menos 2 vulnerabilidades por hogar v1
 	replace v2 = 0 if vulne ==0 | vulne ==1
+	
+	gen vulnerabilidad = v1
+	label define etiq_vulnerabilidad 1 "Vulnerabilidad baja" 0 "Vulnerabilidad alta"
+		label values vulnerabilidad etiq_vulnerabilidad	
+	
 	
 * 6. Filtrar la base por codigo del ccpp, considerando la cantidad de hogares críticos en situación de pobreza extrema*	  
 
@@ -272,8 +279,13 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 		
 	gen pobre_no_ext = 1 if flag_hogar_cse_pobext == 0
 		replace pobre_no_ext = 0 if  flag_hogar_cse_pobext== 1
+		label define etiq_pobrext 1 "Pobre No Extremo" 0 "Pobre Extremo"
+		label values pobre_no_ext etiq_pobrext
+		
 	gen hogar_no_critico = 1 if hogar_critico == 0
 		replace hogar_no_critico = 0 if hogar_critico == 1 
+		label define etiq_HC 1 "Hogar No Crítico" 0 "Hogar Crítico"
+		label values hogar_no_critico etiq_HC
 		
 * 8. Intentando *
 	
@@ -332,7 +344,7 @@ replace P2 = 4 if  corte1 == 0 & corte1a == 0
 collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P2)
 
 
-* PROPUESTA 3: POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO *
+* PROPUESTA 3: POBREZA EXTREMA & VULNERABILIDAD & COBERTURA *
 collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv0 ser1a9 v1 v2, by (ubigeo)
 
 /*gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
@@ -352,28 +364,48 @@ replace pob1 = 1 if prop_PE >= 0.413
 /*gen pob2 = 0 
 replace pob2 = 1 if prop_NoPE >= 0.587 */
 
-gen vul1 = 0
-replace vul1 = 1 if prop_v1 >= 0.781  // si + del 78,1% de H del distrito registran baja vulne: 0 o 1
-/*gen vul2 = 0
-replace vul2 = 1 if prop_v2 >= 0.219*/
+/*gen vul1 = 0
+replace vul1 = 1 if prop_v1 >= 0.781  // si + del 78,1% de H del distrito registran baja vulne: 0 o 1*/
+gen vul2 = 0
+replace vul2 = 1 if prop_v2 >= 0.219 // vulnerabilidad alta
 
 gen cob0 = 0
 replace cob0 = 1 if prop_serv0 >= 0.637
 /*gen cob1 = 0
 replace cob1 = 1 if prop_serv1a9 >= 0.363*/
 
-gen P3 = 1 if pob1 == 1 & vul1 == 1 & cob0 == 1
- replace P3 = 2 if pob1 == 1 & vul1 == 1 & cob0 == 0
- replace P3 = 3 if pob1 == 1 & vul1 == 0 & cob0 == 1 
- replace P3 = 4 if pob1 == 1 & vul1 == 0 & cob0 == 0
- replace P3 = 5 if pob1 == 0 & vul1 == 1 & cob0 == 1 
- replace P3 = 6 if pob1 == 0 & vul1 == 1 & cob0 == 0 
- replace P3 = 7 if pob1 == 0 & vul1 == 0 & cob0 == 1
- replace P3 = 8 if pob1 == 0 & vul1 == 0 & cob0 == 0 
+gen P3 = 1 if pob1 == 1 & vul2 == 1 & cob0 == 1
+ replace P3 = 2 if pob1 == 1 & vul2 == 1 & cob0 == 0 
+ replace P3 = 3 if pob1 == 1 & vul2 == 0 & cob0 == 1 
+ replace P3 = 4 if pob1 == 1 & vul2 == 0 & cob0 == 0
+ replace P3 = 5 if pob1 == 0 & vul2 == 1 & cob0 == 1 
+ replace P3 = 6 if pob1 == 0 & vul2 == 1 & cob0 == 0 
+ replace P3 = 7 if pob1 == 0 & vul2 == 0 & cob0 == 1
+ replace P3 = 8 if pob1 == 0 & vul2 == 0 & cob0 == 0 
  
 preserve
 collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar v1 v2 serv0 ser1a9, by (P3)
 restore
+
+* PROPUESTA 4: POBREZA EXTREMA & COBERTURA & VULNERABILIDAD *
+
+gen P4 = 1 if pob1 == 1 & cob0 == 1 & vul2 == 1
+ replace P4 = 2 if pob1 == 1 & cob0 == 1 & vul2 == 0 
+ replace P4 = 3 if pob1 == 1 & cob0 == 0 & vul2 == 1 
+ replace P4 = 4 if pob1 == 1 & cob0 == 0 & vul2 == 0
+ replace P4 = 5 if pob1 == 0 & cob0 == 1 & vul2 == 1 
+ replace P4 = 6 if pob1 == 0 & cob0 == 1 & vul2 == 0 
+ replace P4 = 7 if pob1 == 0 & cob0 == 0 & vul2 == 1
+ replace P4 = 8 if pob1 == 0 & cob0 == 0 & vul2 == 0 
+
+collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar v1 v2 serv0 ser1a9, by (P4)
+
+ 
+/* CARACTERIZACÓN */
+egen hogar_programa = rowtotal( flag_juntos flag_p65 flag_cunamas flag_sis flag_techo_propio flag_fise flag_pronabec_22 flag_jovenes_prod flag_empleabilidad flag_lurawi flag_pnvr flag_contigo flag_bpvvrs flag_pvl flag_pca)
+
+gen programas = 1 if hogar_programa > 0
+replace programas = 0 if hogar_programa == 0 
  
 /*collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)
 
