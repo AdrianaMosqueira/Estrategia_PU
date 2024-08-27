@@ -203,10 +203,10 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 	gen v_3 = 1 if vulne ==3
 	replace v_3 = 0 if vulne !=3*/
 	
-	gen v1 = 1 if vulne ==0 | vulne ==1  // ninguna o una vulnerabilidad por hogar
+	gen v1 = 1 if vulne ==0 | vulne ==1  // ninguna o una vulnerabilidad por hogar v0
 	replace v1 = 0 if vulne==2 | vulne ==3
 	
-	gen v2 = 1 if vulne ==2 | vulne ==3  // por lo menos dos vulnerabilidades por hogar
+	gen v2 = 1 if vulne ==2 | vulne ==3  // por lo menos dos vulnerabilidades por hogar v1
 	replace v2 = 0 if vulne ==0 | vulne ==1
 	
 * 6. Filtrar la base por codigo del ccpp, considerando la cantidad de hogares críticos en situación de pobreza extrema*	  
@@ -338,8 +338,8 @@ collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_cr
 /*gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
 replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0*/
 
-gen proporcion_HC = hogar_critico/co_hogar 
 gen prop_PE = flag_hogar_cse_pobext/co_hogar 
+gen prop_NoPE = pobre_no_ext/co_hogar
 
 gen prop_v1 = v1/co_hogar
 gen prop_v2 = v2/co_hogar
@@ -347,16 +347,34 @@ gen prop_v2 = v2/co_hogar
 gen prop_serv0 = serv0/co_hogar
 gen prop_serv1a9 = ser1a9/co_hogar
 
-gen corte2 = 0
-replace corte2a = 1 if prop_v3 >= 0.009
+gen pob1 = 0 
+replace pob1 = 1 if prop_PE >= 0.413 
+/*gen pob2 = 0 
+replace pob2 = 1 if prop_NoPE >= 0.587 */
 
-gen P2 = 1 if prop_v3 > 0.009 & prop_serv0 > 0 & pobre_extremo == 1
- replace P1 = 2 if proporcion_HC <= 0.65 & proporcion_HC > 0.53 & pobre_extremo == 1
- replace P1 = 3 if proporcion_HC <= 0.53 & proporcion_HC > 0.43 & pobre_extremo == 1 
- replace P1 = 4 if proporcion_HC <= 0.43 & proporcion_HC > 0.00 & pobre_extremo == 1
- replace P1 = 4 if pobre_extremo == 0 
+gen vul1 = 0
+replace vul1 = 1 if prop_v1 >= 0.781  // si + del 78,1% de H del distrito registran baja vulne: 0 o 1
+/*gen vul2 = 0
+replace vul2 = 1 if prop_v2 >= 0.219*/
+
+gen cob0 = 0
+replace cob0 = 1 if prop_serv0 >= 0.637
+/*gen cob1 = 0
+replace cob1 = 1 if prop_serv1a9 >= 0.363*/
+
+gen P3 = 1 if pob1 == 1 & vul1 == 1 & cob0 == 1
+ replace P3 = 2 if pob1 == 1 & vul1 == 1 & cob0 == 0
+ replace P3 = 3 if pob1 == 1 & vul1 == 0 & cob0 == 1 
+ replace P3 = 4 if pob1 == 1 & vul1 == 0 & cob0 == 0
+ replace P3 = 5 if pob1 == 0 & vul1 == 1 & cob0 == 1 
+ replace P3 = 6 if pob1 == 0 & vul1 == 1 & cob0 == 0 
+ replace P3 = 7 if pob1 == 0 & vul1 == 0 & cob0 == 1
+ replace P3 = 8 if pob1 == 0 & vul1 == 0 & cob0 == 0 
  
-
+preserve
+collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar v1 v2 serv0 ser1a9, by (P3)
+restore
+ 
 /*collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)
 
 	gen cant_std = (co_hogar - 2) / (155863 -  2) 
