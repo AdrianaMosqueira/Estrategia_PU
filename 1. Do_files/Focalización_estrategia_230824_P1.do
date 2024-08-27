@@ -174,50 +174,51 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Propuesta
 	replace hogar_critico = 0 if hogar_recibe > 0 // tab hogar_critico h_vulnerables
 	
 	*Variable: ratios de servcios que el hogar debe recibir y efectivamente recibe
-	gen serv_0 = 1 if hogar_recibe == 0  
+	/*gen serv_0 = 1 if hogar_recibe == 0  
 	replace serv_0 = 0 if hogar_recibe >=1
-	
 	gen serv_1a4 = 1 if hogar_recibe >=1 & hogar_recibe <5
 	replace serv_1a4 = 0 if hogar_recibe==0 
 	replace serv_1a4 = 0 if hogar_recibe>=5
-	
 	gen serv_5a9 = 1 if hogar_recibe >=5 & hogar_recibe <10
 	replace serv_5a9 = 0 if hogar_recibe <5 
-	replace serv_5a9 = 0 if hogar_recibe >=10
+	replace serv_5a9 = 0 if hogar_recibe >=10*/
+	
+	gen serv0 = 1 if hogar_recibe == 0  
+	replace serv0 = 0 if hogar_recibe >=1
+	
+	gen ser1a9 = 1 if hogar_recibe >= 1
+	replace ser1a9 = 0 if hogar_recibe == 0
+	
 	
 	*Variable: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas (# vulnerabilidades)
 	// menor_19 + discapacidad, adulto_60 + discapacidad
 	egen vulne = rowtotal (flag_menor_19 flag_adultomayor flag_discapacidad)
 	
-	gen v_0 = 1 if vulne ==0
+	/*gen v_0 = 1 if vulne ==0
 	replace v_0 = 0 if vulne !=0
-	
 	gen v_1 = 1 if vulne ==1
 	replace v_1 = 0 if vulne !=1
-	
 	gen v_2 = 1 if vulne ==2
 	replace v_2 = 0 if vulne !=2
-	
 	gen v_3 = 1 if vulne ==3
-	replace v_3 = 0 if vulne !=3
+	replace v_3 = 0 if vulne !=3*/
 	
+	gen v1 = 1 if vulne ==0 | vulne ==1  // ninguna o una vulnerabilidad por hogar
+	replace v1 = 0 if vulne==2 | vulne ==3
+	
+	gen v2 = 1 if vulne ==2 | vulne ==3  // por lo menos dos vulnerabilidades por hogar
+	replace v2 = 0 if vulne ==0 | vulne ==1
 	
 * 6. Filtrar la base por codigo del ccpp, considerando la cantidad de hogares críticos en situación de pobreza extrema*	  
 
-	*tab hogar_critico h_vulnerables
+	/*tab hogar_critico h_vulnerables
 	gen proporcion = hogar_critico/co_hogar
 	*hist co_hogar if co_hogar < 2000
 	
 	gen cant_hogar = 1 if co_hogar >=200
 	replace cant_hogar = 0 if co_hogar <200
 	label define etiq_200 1 "CCPP +200 hogares" 0 "CCPP -200 hogares"
-	label values cant_hogar etiq_200
-
-	gen prop_vul3= v_3/co_hogar
-	gen prop_vul2= v_2/co_hogar
-	gen prop_vul1= v_1/co_hogar
-	
-	gen prop_pobreb= flag_hogar_cse_pobext/co_hogar  // serv_4a6, serv_7a9, serv_10a12
+	label values cant_hogar etiq_200*/
 	
 * 7. Agrupación *
 	gen cobertura = 1 if serv_0 == 1 // cobertura baja
@@ -332,24 +333,24 @@ collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P2)
 
 
 * PROPUESTA 3: POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO *
-collapse (first) departamento provincia distrito (count) co_hogar (sum) tag hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3, by (ubigeo)
+collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv0 ser1a9 v1 v2, by (ubigeo)
 
-gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
-replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
+/*gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
+replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0*/
+
 gen proporcion_HC = hogar_critico/co_hogar 
 gen prop_PE = flag_hogar_cse_pobext/co_hogar 
 
-gen prop_v3 = v_3/co_hogar
-gen prop_v2 = v_2/co_hogar
-gen prop_v1 = v_1/co_hogar
+gen prop_v1 = v1/co_hogar
+gen prop_v2 = v2/co_hogar
 
-gen prop_serv0 = serv_0/co_hogar
-gen prop_serv1a4 = serv_1a4/co_hogar
-gen prop_serv5a9 = serv_5a9/co_hogar
+gen prop_serv0 = serv0/co_hogar
+gen prop_serv1a9 = ser1a9/co_hogar
 
-gen prop_PE = flag_hogar_cse_pobext/co_hogar
+gen corte2 = 0
+replace corte2a = 1 if prop_v3 >= 0.009
 
-gen P2 = 1 if prop_v3 > 0 & prop_serv0 > 0 & pobre_extremo == 1
+gen P2 = 1 if prop_v3 > 0.009 & prop_serv0 > 0 & pobre_extremo == 1
  replace P1 = 2 if proporcion_HC <= 0.65 & proporcion_HC > 0.53 & pobre_extremo == 1
  replace P1 = 3 if proporcion_HC <= 0.53 & proporcion_HC > 0.43 & pobre_extremo == 1 
  replace P1 = 4 if proporcion_HC <= 0.43 & proporcion_HC > 0.00 & pobre_extremo == 1
