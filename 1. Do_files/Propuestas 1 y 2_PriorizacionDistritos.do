@@ -281,3 +281,17 @@ use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_270
 	 replace P3 = 8 if pob1 == 0 & cob0 == 0 & vul2 == 0 
 
 	collapse (sum) co_hogar hogar_critico flag_hogar_cse_pobext v1 v2 serv0 ser1a9, by (P3)
+	
+/* CARACTERIZACÓN */
+egen hogar_programa = rowtotal( flag_juntos flag_p65 flag_cunamas flag_sis flag_techo_propio flag_fise flag_pronabec_22 flag_jovenes_prod flag_empleabilidad flag_lurawi flag_pnvr flag_contigo flag_bpvvrs flag_pvl flag_pca)
+
+gen programas = 1 if hogar_programa > 0
+replace programas = 0 if hogar_programa == 0 
+
+collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico flag_hogar_cse_pobext serv0 ser1a9 v1 v2, by (ubigeo)
+ 
+collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico flag_hogar_cse_pobext serv0 ser1a9 v1 v2, by (ubigeo)
+gen porcent_PE = flag_hogar_cse_pobext/co_hogar // % de H pobres extremos por distrito
+gen porcent_COB = serv0/co_hogar // % de H con baja cobertura por distrito
+gen porcent_COB1a9 = ser1a9/co_hogar
+gen porcent_HC = hogar_critico/co_hogar

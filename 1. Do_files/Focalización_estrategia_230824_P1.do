@@ -406,6 +406,8 @@ egen hogar_programa = rowtotal( flag_juntos flag_p65 flag_cunamas flag_sis flag_
 
 gen programas = 1 if hogar_programa > 0
 replace programas = 0 if hogar_programa == 0 
+
+collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico flag_hogar_cse_pobext serv0 ser1a9 v1 v2, by (ubigeo)
  
 /*collapse (first) departamento provincia distrito (count) co_hogar (sum) serv_0 serv_1a4 serv_5a9, by (ubigeo)
 
@@ -415,8 +417,7 @@ replace programas = 0 if hogar_programa == 0
 	gen pr_serv = serv_0 / co_hogar
 
 	gen criterios= (cant_std + prop + pr_pob + pr_serv) / 4
-	xtile grupos = criterios , nq(6)*/
-	
+	xtile grupos = co_hogar , nq(5)*/
 	
 	
 	

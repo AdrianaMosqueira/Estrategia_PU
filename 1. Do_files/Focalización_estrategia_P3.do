@@ -20,10 +20,10 @@ replace pob1 = 1 if prop_PE >= 0.413
 /*gen pob2 = 0 
 replace pob2 = 1 if prop_NoPE >= 0.587 */
 
-gen vul1 = 0
-replace vul1 = 1 if prop_v1 >= 0.781  // si + del 78,1% de H del distrito registran baja vulne: 0 o 1
-/*gen vul2 = 0
-replace vul2 = 1 if prop_v2 >= 0.219*/
+/*gen vul1 = 0
+replace vul1 = 1 if prop_v1 >= 0.781  // si + del 78,1% de H del distrito registran baja vulne: 0 o 1*/
+gen vul2 = 0
+replace vul2 = 1 if prop_v2 >= 0.219
 
 gen cob0 = 0
 replace cob0 = 1 if prop_serv0 >= 0.637
