@@ -2,10 +2,7 @@
 
 * 1. Abrir bases: *
 clear all
-/*use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_26072024.dta"*/
 use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_27082024.dta"
-/*use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/04. Indicadores/Listado_228 distritos empradronamiento 2024.dta"*/
-/*use "/Users/rominamangacambria/Library/CloudStorage/OneDrive-Personal/DMPM/2. PU/7. Estrategia/3. Criterios de priorización territorial/PGH/Hogares_PGH_26072024.dta"*/
 
 * 2. Por el lado de la Demanda: *
 
