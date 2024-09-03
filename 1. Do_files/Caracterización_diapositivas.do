@@ -55,7 +55,7 @@ gen porcent_COB1a9 = ser1a9/co_hogar
 gen porcent_HC = hogar_critico/co_hogar
 
 
-
+/*collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv_0 serv_1a4 serv_5a9 v_0 v_1 v_2 v_3, by (ubigeo) */
 
 
 
