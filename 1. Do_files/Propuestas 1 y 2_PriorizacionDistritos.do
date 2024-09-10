@@ -139,7 +139,12 @@ use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_270
 
 * 4. Priorización: 
 	* Paquete "Alivio a la Pobreza": Todos los servicios + Pobres extremos y 
+	gen aliv_pobre = 0
+	replace aliv_pobre = 1 if flag_hogar_cse_pobext == 1
+	
 	* Paquete "Basico": Cuna mas + Pronabec + JP + PNPE + PVL + PCA + Pobres no extremos 
+	gen paqt_basico = 0
+	replace paqt_basico = 1 if flag_hogar_cse_pobext == 0
 	
 	gen JUNTOS_2 = JUNTOS
 	replace JUNTOS_2=. if flag_hogar_cse_pobext==0  // . para hogares que les corresponde el paquete básico
@@ -196,18 +201,19 @@ use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/Hogares_PGH_270
 
 *8. Por deciles: *	
 	gen decil_pobre_ext = 0 
-		replace decil_pobre_ext = 1 if decil == 10 & flag_hogar_cse_pobext == 1
+		replace decil_pobre_ext = 1 if decil == 10 & flag_hogar_cse_pobext == 1 // decil bajo = pobre extremo
 		
 	gen decil_pobre_NOext = 0 
-		replace decil_pobre_NOext = 1 if decil == 1 & flag_hogar_cse_pobext == 0
+		replace decil_pobre_NOext = 1 if decil == 1 & flag_hogar_cse_pobext == 0 // decil alto = pobre no extremo
 		
 * 8. Intentando *
 
 	* 8.a. PROPUESTA 1: POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO *
-	collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv0 ser1a9 v1 v2 decil_pobre_ext decil_pobre_NOext, by (ubigeo)
+	collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext aliv_pobre pobre_no_ext paqt_basico serv0 ser1a9 v1 v2 decil_pobre_ext decil_pobre_NOext, by (ubigeo)
 	
 	gen pobre_extremo = 1 if flag_hogar_cse_pobext > 0
 	replace pobre_extremo = 0 if flag_hogar_cse_pobext == 0
+	
 	gen proporcion_PE = flag_hogar_cse_pobext/co_hogar
 
 	gen proporcion_HC = hogar_critico/co_hogar 

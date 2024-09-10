@@ -4,12 +4,11 @@
 clear all
 use "C:/Users/apoyo5_dmpmp/Desktop/ADRIANA MO/02. ESTRATEGIA/02. ESQUEMA DE PROGRESIVIDAD/Hogares_PGH_75var.dta"
 
-/*collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext, by (ubigeo)*/
+/*collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext, by (ubigeo)
 
-egen hogar_programa = rowtotal( flag_juntos flag_p65 flag_cunamas flag_sis flag_techo_propio flag_fise flag_pronabec_22 flag_jovenes_prod flag_empleabilidad flag_lurawi flag_pnvr flag_contigo flag_bpvvrs flag_pvl flag_pca)
+egen hogar_programa = rowtotal( flag_juntos flag_p65 flag_cunamas flag_sis flag_techo_propio flag_fise flag_pronabec_22 flag_jovenes_prod flag_empleabilidad flag_lurawi flag_pnvr flag_contigo flag_bpvvrs flag_pvl flag_pca)*/
 	
 //* --- PPT 5: Demanda de hogares --- *//
-
 keep if hogar_recibe >0
 	* Servicios: a. Pensión 65 *
 	gen P_65 = 0
