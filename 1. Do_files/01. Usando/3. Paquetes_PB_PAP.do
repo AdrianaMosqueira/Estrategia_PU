@@ -1,6 +1,7 @@
+//* --- PROPUESTA 1: DIFERENCIAR POR PAQUETES --- *//
 clear all	
-	use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/1. Focalizacion_3_paquetes",clear
-
+use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/02. PGH 17092024/2. BD_inicialLimpia_091724.dta"
+	
 // *----- A. PAQUETE BÁSICO: ----- *//
 
 * 1. Cobertura: *
@@ -59,11 +60,6 @@ clear all
 
 * POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO: Paquete alivio a la pobreza + paquete básico *
 	collapse (sum) co_hogar hogar_critico flag_hogar_cse_pobext PB_serv0 PB_serv1a4 PB_serv5a9 PB_decil1 PB_decil10 PAP_serv0 PAP_serv1a4 PAP_serv5a9 PAP_decil1 PAP_decil10, by (P1)
-	
-	
-	
-	
-	
 	
 	
 	

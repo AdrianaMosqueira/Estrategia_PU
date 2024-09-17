@@ -1,11 +1,11 @@
 // ----- * FOCALIZAR POR PAQUETES: Paquete basico vs Paquete Alivio Pobreza * ----- //
-* 2. Por el lado de la Demanda: *
+* 1. Por el lado de la Demanda: *
 
 	/* a. Vulnerabilidad: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas, NN menores a 36 meses */
 	gen h_vulnerables= flag_menor_19==1 | flag_adultomayor ==1 | flag_discapacidad == 1 | flag_menor_36m ==1
 		label values h_vulnerables etiq_vulnerables
 				
-* 3. Por el lado de la Oferta: SERVICIOS (excepto: SIS, PNVR, BPVVRS)*
+* 2. Por el lado de la Oferta: SERVICIOS (excepto: SIS, PNVR, BPVVRS)*
 
 	*- 1. CUNA MAS: -*
 	gen Cuna_mas = 1 if flag_cunamas == 1 & flag_menor_36m == 1 
@@ -80,15 +80,7 @@
 		replace FISE = . if Total == 0 & flag_fise == 0
 		replace FISE = 0 if Total == 1 & flag_fise == 0
 		
-* 4. Priorización: 
-	* Paquete "Alivio a la Pobreza": Todos los servicios + Pobres extremos y 
-	gen aliv_pobre = 0
-	replace aliv_pobre = 1 if flag_hogar_cse_pobext == 1
-	
-	* Paquete "Basico": Cuna mas + Pronabec + JP + PNPE + PVL + PCA + Pobres no extremos 
-	gen paqt_basico = 0
-	replace paqt_basico = 1 if flag_hogar_cse_pobext == 0
-	
+* 3. Priorización: 
 	gen JUNTOS_2 = JUNTOS
 	replace JUNTOS_2=. if flag_hogar_cse_pobext==0  // . para hogares que les corresponde el paquete básico
 		
@@ -113,11 +105,11 @@
 	/*3. Total de servicios que el hogar no recibe y debe recibir */
 		gen  serv_deberecib = 12 - hogar_norecibe	
 		
-* 5. Definición de HOGARES CRITICOS: *
+* 4. Definición de HOGARES CRITICOS: *
 	gen hogar_critico = h_vulnerables
 	replace hogar_critico = 0 if hogar_recibe > 0 // tab hogar_critico h_vulnerables
 	
-* 6. Definición de COBERTURA y VULNERABILIDAD: *
+* 5. Definición de COBERTURA y VULNERABILIDAD: *
 	gen serv_0 = 1 if hogar_recibe == 0  
 	replace serv_0 = 0 if hogar_recibe >=1
 	
@@ -131,28 +123,28 @@
 	
 	*Variable: menores a 19 años, adultos mayores a 60 años, personas dicapacitadas (# vulnerabilidades)
 	// menor_19 + discapacidad, adulto_60 + discapacidad
-	egen vulne2 = rowtotal (flag_menor_19 flag_adultomayor flag_discapacidad)
+	egen vulne = rowtotal (flag_menor_19 flag_adultomayor flag_discapacidad)
 	
-	gen v_0 = 1 if vulne2 ==0
-	replace v_0 = 0 if vulne2 !=0
+	gen v_0 = 1 if vulne ==0
+	replace v_0 = 0 if vulne !=0
 	
-	gen v_1 = 1 if vulne2 ==1
-	replace v_1 = 0 if vulne2 !=1
+	gen v_1 = 1 if vulne ==1
+	replace v_1 = 0 if vulne !=1
 	
-	gen v_2 = 1 if vulne2 ==2
-	replace v_2 = 0 if vulne2 !=2
+	gen v_2 = 1 if vulne ==2
+	replace v_2 = 0 if vulne !=2
 	
-	gen v_3 = 1 if vulne2 ==3
-	replace v_3 = 0 if vulne2 !=3
+	gen v_3 = 1 if vulne ==3
+	replace v_3 = 0 if vulne !=3
 		
-*7. Otras variables: *
+*6. Otras variables: *
 	gen pobre_no_ext = 1 if flag_hogar_cse_pobext == 0
 		replace pobre_no_ext = 0 if  flag_hogar_cse_pobext== 1
 			
 	gen hogar_no_critico = 1 if hogar_critico == 0
 		replace hogar_no_critico = 0 if hogar_critico == 1 
 
-*8. Por deciles: *	
+*7. Por deciles: *	
 	gen decil_pobre_ext = 0 
 		replace decil_pobre_ext = 1 if decil == 10 // decil bajo = pobre extremo
 		
