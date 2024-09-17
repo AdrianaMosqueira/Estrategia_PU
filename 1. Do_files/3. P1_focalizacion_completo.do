@@ -136,14 +136,14 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Prior1_co
 	replace hogar_critico = 0 if hogar_recibe > 0 // tab hogar_critico h_vulnerables
 	
 * 6. Definición de COBERTURA y VULNERABILIDAD: *
-	/*gen serv_0 = 1 if hogar_recibe == 0  
+	gen serv_0 = 1 if hogar_recibe == 0  
 	replace serv_0 = 0 if hogar_recibe >=1
 	gen serv_1a4 = 1 if hogar_recibe >=1 & hogar_recibe <5
 	replace serv_1a4 = 0 if hogar_recibe==0 
 	replace serv_1a4 = 0 if hogar_recibe>=5
 	gen serv_5a9 = 1 if hogar_recibe >=5 & hogar_recibe <10
 	replace serv_5a9 = 0 if hogar_recibe <5 
-	replace serv_5a9 = 0 if hogar_recibe >=10*/
+	replace serv_5a9 = 0 if hogar_recibe >=10
 	
 	gen serv0 = 1 if hogar_recibe == 0  
 	replace serv0 = 0 if hogar_recibe >=1
@@ -155,14 +155,14 @@ use "D:/2024/01. trabajo/02. midis/01. FOCALIZACION/05. Bases de datos/Prior1_co
 	// menor_19 + discapacidad, adulto_60 + discapacidad
 	egen vulne = rowtotal (flag_menor_19 flag_adultomayor flag_discapacidad)
 	
-	/*gen v_0 = 1 if vulne ==0
+	gen v_0 = 1 if vulne ==0
 	replace v_0 = 0 if vulne !=0
 	gen v_1 = 1 if vulne ==1
 	replace v_1 = 0 if vulne !=1
 	gen v_2 = 1 if vulne ==2
 	replace v_2 = 0 if vulne !=2
 	gen v_3 = 1 if vulne ==3
-	replace v_3 = 0 if vulne !=3*/
+	replace v_3 = 0 if vulne !=3
 	
 	gen v1 = 1 if vulne ==0 | vulne ==1  // 0 o 1 vulnerabilidad por hogar v0
 	replace v1 = 0 if vulne==2 | vulne ==3

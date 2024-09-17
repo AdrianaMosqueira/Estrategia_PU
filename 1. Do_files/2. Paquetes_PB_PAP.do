@@ -17,8 +17,6 @@ clear all
 	gen PB_decil10 = 0
 		replace PB_decil10 = 1 if flag_hogar_cse_pobext==0 & decil==10	
 
-
-
 // *----- B. PAQUETE ALIVIO DE LA POBREZA: ----- *//
 
 * 1. Cobertura: *
