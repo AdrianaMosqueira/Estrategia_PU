@@ -50,6 +50,9 @@ keep if hogar_recibe >0
 		egen vulne_des = rowtotal (flag_menor_19 flag_adultomayor flag_discapacidad)
 		tab vulne_des
 
+//* --- PPT 6: Distribución del país --- *//	
+collapse (count) co_hogar (sum) hogar_critico flag_hogar_cse_pobext serv0 ser1a9 v1 v2, by (departamento)
+		
 //* --- PPT 7: Caracterización 1 --- *//	
 	* Tabla 1: Distribución de hogares por CCPP - rangos *
 	collapse (first) departamento provincia distrito centropoblado (count) co_hogar (sum) hogar_critico flag_hogar_cse_pobext serv0 ser1a9 v1 v2, by (ccpp)
