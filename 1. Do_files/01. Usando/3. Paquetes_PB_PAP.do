@@ -46,11 +46,14 @@ use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/02. PGH 1709202
 	gen prop_PE = flag_hogar_cse_pobext/co_hogar
 
  	gen corte1 = 0 
-	replace corte1 = 1 if prop_PE >= 0.413 
+	replace corte1 = 1 if prop_PE >= 0.398 
 
+	/* xtile decil_HC = proporcion_HC, nq(10)
+	bysort decil_HC: summarize proporcion_HC */
+	
 	gen corte1a = 0
-	replace corte1a = 1 if proporcion_HC >= 0.689
-	replace corte1a = 2 if proporcion_HC <= 0.602
+	replace corte1a = 1 if proporcion_HC >= 0.582  //0.689
+	replace corte1a = 2 if proporcion_HC <= 0.507  //0.602
 
 	gen P1 = 1 if corte1 == 1 & corte1a == 0 | corte1a == 1
 	replace P1 = 2 if  corte1 == 1 & corte1a == 2
@@ -58,13 +61,13 @@ use "C:/Users/apoyo5_dmpmp/Desktop/Adriana_Mo/05. Bases de datos/02. PGH 1709202
 	replace P1 = 4 if  corte1 == 0 & corte1a == 0
 	replace P1 = 5 if  corte1 == 0 & corte1a == 2
 
+	tab P1
+	
+	/*collapse (count) ubigeo (sum) co_hogar hogar_critico flag_hogar_cse_pobext, by (P1)*/
+	
 * POBREZA EXTREMA & PROPORCION DE HOGAR CRITICO: Paquete alivio a la pobreza + paquete básico *
 	collapse (sum) co_hogar hogar_critico flag_hogar_cse_pobext PB_serv0 PB_serv1a4 PB_serv5a9 PB_decil1 PB_decil10 PAP_serv0 PAP_serv1a4 PAP_serv5a9 PAP_decil1 PAP_decil10, by (P1)
-	
-	
-	
-	
-	
+		
 	
 	
 	
