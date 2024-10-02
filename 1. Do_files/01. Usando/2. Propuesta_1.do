@@ -30,3 +30,17 @@ collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_cr
 	replace P1 = 5 if  corte1 == 0 & corte1a == 2
 	
 	collapse (sum) hogar_critico flag_hogar_cse_pobext co_hogar, by (P1)
+
+	
+//* CARACTERIZACIÓN: CCPP *//
+
+* 1. Abrir bases: *
+clear all
+use "C:/Users/apoyo5_dmpmp/Desktop/ADRIANA MO/02. ESTRATEGIA/02. ESQUEMA DE PROGRESIVIDAD/Hogares_PGH_75var.dta"
+
+collapse (first) departamento provincia distrito (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv_0 serv_1a4 serv_5a9 serv0 ser1a9 v_0 v_1 v_2 v_3 v1 v2 decil_pobre_ext decil_pobre_NOext, by (ubigeo)
+
+gen tipo_dist = 0
+	replace tipo_dist = 1 if co_hogar >= 100
+
+collapse (first) departamento provincia distrito centropoblado (count) co_hogar (sum) hogar_critico hogar_no_critico flag_hogar_cse_pobext pobre_no_ext serv_0 serv_1a4 serv_5a9 serv0 ser1a9 v_0 v_1 v_2 v_3 v1 v2 decil_pobre_ext decil_pobre_NOext, by (ccpp)
