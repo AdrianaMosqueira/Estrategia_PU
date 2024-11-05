@@ -1,11 +1,11 @@
-/*----------------------------------
+/*******************************************************************************
 PROYECCIONES DE POBREZA URBANA
 Referencia: Indicadores Emblemáticos
 Fecha de actualización: 04-11-2024
-*-----------------------------------*/
+*******************************************************************************/
 
 ***Escenarios
-*El do file genera 4 escenarios (4 modelos)
+*El do file genera 3 escenarios (3 modelos)
 *Se pueden agregar + escenarios modificando fecha de inicio (ejem: 2013)
 
        local dt = "`c(current_date)'"
@@ -35,9 +35,11 @@ local iAo = 2010              // -------> (Modificar) Serie: año inicial
 local uAo = 2023              // -------> (Modificar) Serie: año final
 local pAo = 2030              // -------> (Modificar) Proyección hasta
 
-/* ------ PROYECCIONES ------*/
 
-keep Ao PUrbana           // Mantener solo variable Año e Indicador de PU
+*******************************************************************************
+*** PROYECCIONES
+*******************************************************************************/
+keep Ao PUrbana           // Mantener solo variable Año e Indicador
 drop if Ao < `iAo'      // Filtra serie desde año_ini hasta año_fin declarado
 
 local pproy =`pAo' - `uAo' // Años de proyección
@@ -76,8 +78,31 @@ gen `PobUrb'_aux`i'=`PobUrb'      // variable auxiliar para la proyección
 }
 
 
+***Proyección considerando PBI 
+* Crear logaritmos de las variables, si es necesario, para una relación log-lineal
+gen log_pobreza = log(pobreza_urbana)
+gen log_pib = log(pib_percapita)
 
+* Modelo de regresión
+reg log_pobreza Ao log_pib
 
+* Calcular el número de años de proyección
+local anios_proyeccion = `proyeccion_ano' - `fin_ano'
 
+* Expande el conjunto de datos para incluir los años de proyección
+tsset Ao                     // Configurar como datos de series temporales
+tsappend, add(`anios_proyeccion')  // Agregar años hasta la proyección
 
+* Asignar valores proyectados de crecimiento económico (puedes usar una tasa de crecimiento esperada)
+gen pib_percapita_proy = .
+replace pib_percapita_proy = pib_percapita[_n-1] * 1.02 if Ao > `fin_ano' // Ejemplo de 2% de crecimiento anual
 
+* Aplicar logaritmo al valor proyectado de PIB per cápita
+replace log_pib = log(pib_percapita_proy) if Ao > `fin_ano'
+
+* Generar las proyecciones de pobreza urbana
+predict log_pobreza_proy, xb   // Obtener el valor ajustado en logaritmo
+gen pobreza_urbana_proy = exp(log_pobreza_proy) if Ao > `fin_ano'   // Convertir del logaritmo
+
+* Visualizar los resultados
+list Ao pobreza_urbana pobreza_urbana_proy if Ao >= `inicio_ano'
